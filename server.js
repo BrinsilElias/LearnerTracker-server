@@ -64,13 +64,22 @@ app.get('/datastat', async (req, res) => {
     let learnerCount = await learnerModel.countDocuments()
     let qualifiedCount = await learnerModel.countDocuments({"status": "qualified"})
     let placedCount = await learnerModel.countDocuments({"placement": "placed"})
-    res.json(
-        {"training head": thCount, 
-        "placement officer": poCount, 
-        "learners": learnerCount, 
-        "qualified": qualifiedCount,
-        "placed": placedCount
-    })
+    try {
+        let decoded = await jwt.verify(req.query.token, "learnertracker")
+        if(decoded && decoded.email){
+            res.json(
+                {"traininghead": thCount, 
+                "placementofficer": poCount, 
+                "learners": learnerCount, 
+                "qualified": qualifiedCount,
+                "placed": placedCount
+            })
+        }else{
+            res.json({status: "Unauthorized Access"})
+        }
+    } catch (err) {
+        res.json({status: "Unauthorized Access"})
+    }
 })
 
 app.listen(port, () => {
