@@ -114,6 +114,34 @@ app.post('/user/add', async (req, res) => {
     }
 })
 
+// Edit learners data
+app.post('/:id/learner/edit', async (req, res) => {
+    const id = req.params.id
+    try {
+        let decoded = await jwt.verify(req.body.token, "learnertracker")
+        if(decoded && decoded.email){
+            let data = await learnerModel.findOneAndUpdate({"_id": id}, req.body)
+            res.json({status: "Data Edited"})
+        }
+    } catch (err) {
+        res.json({status: "Unauthorized Access"})
+    }
+})
+
+// Edit learners data
+app.post('/:id/user/edit', async (req, res) => {
+    const id = req.params.id
+    try {
+        let decoded = await jwt.verify(req.body.token, "learnertracker")
+        if(decoded && decoded.email){
+            let data = await userModel.findOneAndUpdate({"_id": id}, req.body)
+            res.json({status: "Data Edited"})
+        }
+    } catch (err) {
+        res.json({status: "Unauthorized Access"})
+    }
+})
+
 // Delete data
 app.post('/:role/:id/delete', async (req, res) => {
     const id = req.params.id
