@@ -161,6 +161,32 @@ app.post('/:role/:id/delete', async (req, res) => {
     }
 })
 
+// Bulk import learners data
+app.post('/learner/import', async (req, res) => {
+    const learners = req.body.data;
+
+    learnerModel.create(learners)
+    .then(() => {
+      res.send({status: "Data imported successfully"});
+    })
+    .catch((err) => {
+      res.status(500).send(`Error importing data: ${err}`);
+    });
+})
+
+// Bulk import users data
+app.post('/user/import', async (req, res) => {
+    const learners = req.body.data;
+
+    userModel.create(learners)
+    .then(() => {
+      res.send({status: "Data imported successfully"});
+    })
+    .catch((err) => {
+      res.status(500).send(`Error importing data: ${err}`);
+    });
+})
+
 app.listen(port, () => {
     console.log(`app running on port http://localhost:${port}`)
 })
