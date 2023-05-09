@@ -20,7 +20,7 @@ app.get('/', (req, res) => {
 })
 
 // Login Authentication
-app.post('/login', async(req, res) => {
+app.post('/api/login', async(req, res) => {
     const email = req.body.email
     const password = req.body.password
 
@@ -44,32 +44,32 @@ app.post('/login', async(req, res) => {
 })
 
 // Retrieiving Learners Data
-app.get('/learnersdata', async (req, res) => {
+app.get('/api/learnersdata', async (req, res) => {
     let data = await learnerModel.find()
     res.json(data)
 })
 
 // Retrieiving Training Head Data
-app.get('/thusersdata', async (req, res) => {
+app.get('/api/thusersdata', async (req, res) => {
     let data = await userModel.find({"role": "training head"})
     res.json(data)
 })
 
 // Retrieiving Placement Officer Data
-app.get('/pousersdata', async (req, res) => {
+app.get('/api/pousersdata', async (req, res) => {
     let data = await userModel.find({"role": "placement officer"})
     res.json(data)
 })
 
 // Retrieiving Data Stats
-app.get('/datastat', async (req, res) => {
+app.post('/api/datastat', async (req, res) => {
     let thCount = await userModel.countDocuments({"role": "training head"})
     let poCount = await userModel.countDocuments({"role": "placement officer"})
     let learnerCount = await learnerModel.countDocuments()
     let qualifiedCount = await learnerModel.countDocuments({"status": "qualified"})
     let placedCount = await learnerModel.countDocuments({"placement": "placed"})
     try {
-        let decoded = await jwt.verify(req.query.token, "learnertracker")
+        let decoded = await jwt.verify(req.body.token, "learnertracker")
         if(decoded && decoded.email){
             res.json(
                 {"traininghead": thCount, 
@@ -87,7 +87,7 @@ app.get('/datastat', async (req, res) => {
 })
 
 // Add learners data
-app.post('/learner/add', async (req, res) => {
+app.post('/api/learner/add', async (req, res) => {
     const data = new learnerModel(req.body)
     try {
         let decoded = await jwt.verify(req.body.token, "learnertracker")
@@ -101,7 +101,7 @@ app.post('/learner/add', async (req, res) => {
 })
 
 // Add users data
-app.post('/user/add', async (req, res) => {
+app.post('/api/user/add', async (req, res) => {
     const data = new userModel(req.body) 
     try {
         let decoded = await jwt.verify(req.body.token, "learnertracker")
@@ -115,7 +115,7 @@ app.post('/user/add', async (req, res) => {
 })
 
 // Edit learners data
-app.post('/:id/learner/edit', async (req, res) => {
+app.post('/api/:id/learner/edit', async (req, res) => {
     const id = req.params.id
     try {
         let decoded = await jwt.verify(req.body.token, "learnertracker")
@@ -128,8 +128,8 @@ app.post('/:id/learner/edit', async (req, res) => {
     }
 })
 
-// Edit learners data
-app.post('/:id/user/edit', async (req, res) => {
+// Edit user data
+app.post('/api/:id/user/edit', async (req, res) => {
     const id = req.params.id
     try {
         let decoded = await jwt.verify(req.body.token, "learnertracker")
@@ -143,7 +143,7 @@ app.post('/:id/user/edit', async (req, res) => {
 })
 
 // Delete data
-app.post('/:role/:id/delete', async (req, res) => {
+app.post('/api/:role/:id/delete', async (req, res) => {
     const id = req.params.id
     const role = req.params.role
     try {
@@ -162,7 +162,7 @@ app.post('/:role/:id/delete', async (req, res) => {
 })
 
 // Bulk import learners data
-app.post('/learner/import', async (req, res) => {
+app.post('/api/learner/import', async (req, res) => {
     const learners = req.body.data;
 
     learnerModel.create(learners)
@@ -175,7 +175,7 @@ app.post('/learner/import', async (req, res) => {
 })
 
 // Bulk import users data
-app.post('/user/import', async (req, res) => {
+app.post('/api/user/import', async (req, res) => {
     const learners = req.body.data;
 
     userModel.create(learners)
