@@ -1,5 +1,6 @@
 const port = 8080
 const cors = require('cors')
+const path = require('path')
 const express = require('express')
 const jwt = require('jsonwebtoken')
 const bodyparser = require('body-parser')
@@ -15,9 +16,14 @@ require('./Connection/connection.js')
 const { learnerModel } = require('./Model/Learner.js')
 const { userModel } = require('./Model/User.js')
 
-app.get('/', (req, res) => {
-    res.json("Server is working")
-})
+app.use(express.static(path.join(__dirname,'/build')));
+app.get('/*', function(req, res){
+    res.sendFile(path.join(__dirname,'/build/index.html')); 
+});
+
+// app.get('/', (req, res) => {
+//     res.json("Server is working")
+// })
 
 // Login Authentication
 app.post('/api/login', async(req, res) => {
@@ -44,19 +50,19 @@ app.post('/api/login', async(req, res) => {
 })
 
 // Retrieiving Learners Data
-app.get('/api/learnersdata', async (req, res) => {
+app.post('/api/learnersdata', async (req, res) => {
     let data = await learnerModel.find()
     res.json(data)
 })
 
 // Retrieiving Training Head Data
-app.get('/api/thusersdata', async (req, res) => {
+app.post('/api/thusersdata', async (req, res) => {
     let data = await userModel.find({"role": "training head"})
     res.json(data)
 })
 
 // Retrieiving Placement Officer Data
-app.get('/api/pousersdata', async (req, res) => {
+app.post('/api/pousersdata', async (req, res) => {
     let data = await userModel.find({"role": "placement officer"})
     res.json(data)
 })
